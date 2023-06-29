@@ -1,0 +1,43 @@
+package ru.kata.spring.boot_security.demo.service;
+
+
+import org.springframework.stereotype.Service;
+import ru.kata.spring.boot_security.demo.dao.UserDao;
+import ru.kata.spring.boot_security.demo.model.User;
+
+import javax.transaction.Transactional;
+import java.util.List;
+
+@Service
+public class UserServiceImp implements UserService {
+
+    private UserDao userDao;
+
+    public UserServiceImp(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+
+    public List<User> show() {
+        return userDao.show();
+    }
+
+    @Transactional
+    public void delete(int id) {
+        userDao.delete(id);
+    }
+
+    @Transactional
+    public void update(int id, User user) {
+        userDao.update(id, user);
+    }
+
+    @Transactional
+    public void create(User user) {
+        userDao.create(user);
+    }
+
+    public User getUser(int id) {
+        return userDao.getUser(id);
+    }
+}
