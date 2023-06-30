@@ -8,6 +8,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+
+
 @Repository
 public class UserDaoImp implements UserDao {
 
@@ -40,6 +42,16 @@ public class UserDaoImp implements UserDao {
 
     public void create(User user) {
         em.persist(user);
+    }
+
+    public User findByUsername(String username) {
+        return (User) em.createQuery("Select user from User user left join fetch user.roles where user.username=:username")
+                .setParameter("username", username).getSingleResult();
+    }
+
+
+    public void saveAll(List<User> users) {
+        users.stream().forEach(user -> em.persist(user));
     }
 
 }

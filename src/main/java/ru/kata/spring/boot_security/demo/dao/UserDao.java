@@ -16,4 +16,8 @@ public interface UserDao {
     void create(User user);
 
     User getUser(int id);
+
+    User findByUsername(String username);
+
+    void saveAll(List<User> users);
 }
