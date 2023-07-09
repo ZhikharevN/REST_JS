@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -32,9 +33,16 @@ public class User implements UserDetails {
     @Column(name = "age")
     @Min(value = 0, message = "Age should be greater then 0")
     private int age;
+
+
     @Column(name = "password")
     @NotEmpty(message = "password should not be empty")
     private String password;
+
+    @Column(name = "email")
+    @NotEmpty(message = "email should not be empty")
+    @Email(message = "email dont valid")
+    private String email;
 
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id")
@@ -46,13 +54,27 @@ public class User implements UserDetails {
 
     }
 
-    public User(String username, String surname, int age, String password, Set<Role> roles) {
+    public User(String username, String surname, int age, String password, String email, Set<Role> roles) {
         this.username = username;
         this.surname = surname;
         this.age = age;
         this.password = password;
         this.roles = roles;
+        this.email = email;
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 
     public void setPassword(String password) {
         this.password = password;
@@ -148,6 +170,19 @@ public class User implements UserDetails {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id && Objects.equals(username, user.username);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", surname='" + surname + '\'' +
+                ", age=" + age +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 
     @Override

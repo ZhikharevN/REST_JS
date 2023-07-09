@@ -1,0 +1,19 @@
+.link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.column {
+    padding-left: 20px;
+}
+
+.header {
+    height: 40px;
+    font-size: 20px;
+    background-color: #111;
+    color: #fff;
+}
+
+.fontsize15 {
+    font-size: 15px;
+}

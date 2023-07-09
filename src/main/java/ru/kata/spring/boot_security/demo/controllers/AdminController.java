@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +14,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -30,6 +33,11 @@ public class AdminController {
     @GetMapping("")
     public String getUsers(Model model) {
         model.addAttribute("users", userService.show());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        model.addAttribute("user_main", user);
+        List<Role> roles = roleService.findAll();
+        model.addAttribute("allRoles", roles);
         return "users";
     }
 
@@ -38,22 +46,23 @@ public class AdminController {
         model.addAttribute("user", new User());
         List<Role> roles = roleService.findAll();
         model.addAttribute("allRoles", roles);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        model.addAttribute("user_main", user);
+
         return "create";
     }
 
-    @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("user", userService.getUser(id));
-        List<Role> roles = roleService.findAll();
-        model.addAttribute("allRoles", roles);
-        return "edit";
-    }
 
-    @PostMapping()
+    @PostMapping("")
     public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "create";
         }
+        user.setRoles(user.getRoles()
+                .stream()
+                .map(role -> roleService.findById(Integer.parseInt(role.getName())))
+                .collect(Collectors.toSet()));
         userService.create(user);
         return "redirect:/admin";
     }
@@ -66,10 +75,18 @@ public class AdminController {
 
     @PatchMapping("/{id}/edit")
     public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") int id) {
+        user.setRoles(user.getRoles()
+                .stream()
+                .map(role -> roleService.findById(Integer.parseInt(role.getName())))
+                .collect(Collectors.toSet()));
+
         if (bindingResult.hasErrors()) {
-            return "edit";
+            System.out.println("Ошибка");
+            return "redirect:/admin";
         }
         userService.update(id, user);
         return "redirect:/admin";
     }
+
+
 }

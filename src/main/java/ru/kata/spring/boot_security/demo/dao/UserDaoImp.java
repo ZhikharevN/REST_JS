@@ -9,49 +9,52 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 
-
 @Repository
 public class UserDaoImp implements UserDao {
 
     @PersistenceContext
-    private EntityManager em;
+    private EntityManager entityManager;
 
 
     public List<User> show() {
-        return em.createQuery("SELECT user FROM User user").getResultList();
+        return entityManager.createQuery("SELECT user FROM User user").getResultList();
     }
 
 
     public void delete(int id) {
-        User user = em.find(User.class, id);
+        User user = entityManager.find(User.class, id);
         if (user == null) {
             throw new NullPointerException();
         }
-        em.remove(user);
+        entityManager.remove(user);
     }
 
 
     public void update(int id, User updatedUser) {
-        em.merge(updatedUser);
+        entityManager.merge(updatedUser);
     }
 
     public User getUser(int id) {
-        return em.find(User.class, id);
+        return entityManager.find(User.class, id);
     }
 
 
     public void create(User user) {
-        em.persist(user);
+        entityManager.persist(user);
     }
 
     public User findByUsername(String username) {
-        return (User) em.createQuery("Select user from User user left join fetch user.roles where user.username=:username")
+        return (User) entityManager.createQuery("Select user from User user left join fetch user.roles where user.username=:username")
                 .setParameter("username", username).getSingleResult();
     }
 
+    public User findByEmail(String email) {
+        return (User) entityManager.createQuery("Select user from User user left join fetch user.roles where user.email=:email")
+                .setParameter("email", email).getSingleResult();
+    }
 
     public void saveAll(List<User> users) {
-        users.stream().forEach(user -> em.persist(user));
+        users.stream().forEach(user -> entityManager.persist(user));
     }
 
 }

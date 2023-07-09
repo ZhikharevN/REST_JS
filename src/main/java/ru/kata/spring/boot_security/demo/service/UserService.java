@@ -20,4 +20,6 @@ public interface UserService {
     User findByUsername(String username);
 
     void saveAll(List<User> users);
+
+    User findByEmail(String email);
 }

@@ -31,11 +31,9 @@ public class ApplicationRunner implements CommandLineRunner {
 
         roleService.saveAll(Set.of(roleAdmin, roleUser));
 
-        System.out.println("Iamwork");
-
-        User Nikita = new User("Nikita", "Zhikharev", 11, "1111", Set.of(roleAdmin));
-        User Elena = new User("Elena", "Smith", 22, "2222", Set.of(roleUser));
-        User John = new User("John", "Adams", 33, "3333", Set.of(roleUser, roleAdmin));
+        User Nikita = new User("Nikita", "Zhikharev", 11, "1111", "zhikharev@mail.ru", Set.of(roleAdmin));
+        User Elena = new User("Elena", "Smith", 22, "2222", "Smith@mail.ru", Set.of(roleUser));
+        User John = new User("John", "Adams", 33, "3333", "Adams@mail.ru", Set.of(roleUser, roleAdmin));
 
         userService.saveAll(List.of(Nikita, Elena, John));
     }

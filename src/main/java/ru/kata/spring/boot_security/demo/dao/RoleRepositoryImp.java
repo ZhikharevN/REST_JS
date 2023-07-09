@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.repositories;
+package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -14,22 +14,22 @@ import java.util.Set;
 public class RoleRepositoryImp implements RoleRepository {
 
     @PersistenceContext
-    private EntityManager em;
+    private EntityManager entityManager;
 
     @Override
     public List<Role> findAll() {
-        return em.createQuery("SELECT role FROM Role role").getResultList();
+        return entityManager.createQuery("SELECT role FROM Role role").getResultList();
     }
 
 
     @Override
     @Transactional
     public void saveAll(Set<Role> roles) {
-        roles.stream().forEach(role -> em.persist(role));
+        roles.stream().forEach(role -> entityManager.persist(role));
     }
 
     @Override
     public Role findById(int id) {
-        return em.find(Role.class, id);
+        return entityManager.find(Role.class, id);
     }
 }
