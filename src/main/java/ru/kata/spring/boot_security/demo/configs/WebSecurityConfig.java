@@ -26,7 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/css/styles.css", "/css/**").permitAll()
+                .antMatchers( "/css/**", "/getUser", "/getUsers", "**/webjars/jquery/3.3.1/jquery.min.js", "/js/**").permitAll()
                 .antMatchers("/user").hasAnyRole("USER", "ADMIN")
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()

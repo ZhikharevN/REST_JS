@@ -1,24 +1,19 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Controller
-@RequestMapping(value = "/admin")
+@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -29,64 +24,62 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-
     @GetMapping("")
-    public String getUsers(Model model) {
-        model.addAttribute("users", userService.show());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        model.addAttribute("user_main", user);
-        List<Role> roles = roleService.findAll();
-        model.addAttribute("allRoles", roles);
+    public String getUsers() {
         return "users";
     }
 
     @GetMapping("/new")
-    public String newUser(Model model) {
-        model.addAttribute("user", new User());
-        List<Role> roles = roleService.findAll();
-        model.addAttribute("allRoles", roles);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        model.addAttribute("user_main", user);
-
+    public String newUser() {
         return "create";
     }
 
-
-    @PostMapping("")
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "create";
-        }
-        user.setRoles(user.getRoles()
-                .stream()
-                .map(role -> roleService.findById(Integer.parseInt(role.getName())))
-                .collect(Collectors.toSet()));
-        userService.create(user);
-        return "redirect:/admin";
+    @GetMapping("/getUsers")
+    @ResponseBody
+    public List<User> getUser() {
+        return userService.show();
     }
 
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
+    @GetMapping("/getUser/{id}")
+    @ResponseBody
+    public User getUserById(@PathVariable("id") int id) {
+        return userService.getUser(id);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @ResponseBody
+    public void deleteUser(@PathVariable("id") int id) {
         userService.delete(id);
-        return "redirect:/admin";
     }
 
-    @PatchMapping("/{id}/edit")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") int id) {
-        user.setRoles(user.getRoles()
-                .stream()
-                .map(role -> roleService.findById(Integer.parseInt(role.getName())))
-                .collect(Collectors.toSet()));
+    @GetMapping("/getRoles")
+    @ResponseBody
+    public List<Role> getRoles() {
+        return roleService.findAll();
+    }
 
-        if (bindingResult.hasErrors()) {
-            System.out.println("Ошибка");
-            return "redirect:/admin";
+    @PatchMapping(value = "/editUser")
+    @ResponseBody
+    public void editUser(@ModelAttribute User user) {
+        if (user.getRoles() != null) {
+            user.setRoles(user.getRoles()
+                    .stream()
+                    .map(role -> roleService.findById(Integer.parseInt(role.getName())))
+                    .collect(Collectors.toSet()));
         }
-        userService.update(id, user);
-        return "redirect:/admin";
+        userService.update(user.getId(), user);
     }
 
-
+    @PostMapping("/create")
+    @ResponseBody
+    public void createUser(@ModelAttribute User user) {
+        System.out.println(user);
+        if (user.getRoles() != null) {
+            user.setRoles(user.getRoles()
+                    .stream()
+                    .map(role -> roleService.findById(Integer.parseInt(role.getName())))
+                    .collect(Collectors.toSet()));
+        }
+        userService.create(user);
+    }
 }
