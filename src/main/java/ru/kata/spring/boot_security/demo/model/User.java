@@ -177,6 +177,11 @@ public class User implements UserDetails {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(id, username);
+    }
+
+    @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
@@ -187,11 +192,6 @@ public class User implements UserDetails {
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
                 '}';
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username);
     }
 }
 

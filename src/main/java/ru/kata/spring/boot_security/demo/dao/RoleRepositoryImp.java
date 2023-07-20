@@ -18,12 +18,11 @@ public class RoleRepositoryImp implements RoleRepository {
 
     @Override
     public List<Role> findAll() {
-        return entityManager.createQuery("SELECT role FROM Role role").getResultList();
+        return entityManager.createQuery("from Role").getResultList();
     }
 
 
     @Override
-    @Transactional
     public void saveAll(Set<Role> roles) {
         roles.stream().forEach(role -> entityManager.persist(role));
     }

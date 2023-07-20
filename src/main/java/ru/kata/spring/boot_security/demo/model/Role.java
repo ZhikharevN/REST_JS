@@ -8,11 +8,6 @@ import java.util.Set;
 @Entity
 @Table(name = "roles")
 public class Role {
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -67,5 +62,10 @@ public class Role {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

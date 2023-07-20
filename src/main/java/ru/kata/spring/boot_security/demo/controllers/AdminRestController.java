@@ -54,7 +54,6 @@ public class AdminRestController {
 
     @PostMapping("/create")
     public void createUser(@ModelAttribute User user) {
-        System.out.println(user);
         if (user.getRoles() != null) {
             user.setRoles(user.getRoles()
                     .stream()

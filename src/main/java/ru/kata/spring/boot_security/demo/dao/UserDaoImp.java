@@ -44,12 +44,11 @@ public class UserDaoImp implements UserDao {
     }
 
     public User findByUsername(String username) {
-        return (User) entityManager.createQuery("Select user from User user left join fetch user.roles where user.username=:username")
+        return entityManager.createQuery("Select user from User user left join fetch user.roles where user.username=:username", User.class)
                 .setParameter("username", username).getSingleResult();
     }
-
     public User findByEmail(String email) {
-        return (User) entityManager.createQuery("Select user from User user left join fetch user.roles where user.email=:email")
+        return entityManager.createQuery("Select user from User user left join fetch user.roles where user.email=:email", User.class)
                 .setParameter("email", email).getSingleResult();
     }
 
